@@ -1,0 +1,777 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Mona Music 设置</title>
+    <style>
+      @font-face {
+        font-family: "Source Han Sans SC";
+        src: url("./fonts/SourceHanSansSC-Regular-2.otf") format("opentype");
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+      }
+      html, body {
+        margin: 0;
+        width: 100%;
+        height: 100dvh;
+        min-height: 100vh;
+        overflow: hidden;
+        font-family: "Source Han Sans SC", sans-serif;
+        background: #0a0d16;
+        color: #f6f7fb;
+      }
+      .viewport {
+        width: 100%;
+        height: 100dvh;
+        min-height: 100vh;
+        overflow: hidden;
+      }
+      .phone {
+        width: 100%;
+        height: 100%;
+        max-width: 820px;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 82% 8%, rgba(255, 50, 110, 0.25), transparent 28%),
+          linear-gradient(168deg, #172034, #0f1320);
+      }
+      .bg {
+        position: absolute;
+        inset: 0;
+        padding: clamp(16px, 6vw, 30px);
+      }
+      .mock-title {
+        font-size: clamp(28px, 9vw, 44px);
+        margin: 0;
+      }
+      .mock-lyrics {
+        margin-top: 18px;
+        font-size: clamp(16px, 5.6vw, 24px);
+        color: rgba(255, 255, 255, 0.64);
+      }
+      .mask {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+      }
+      .sheet {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 82%;
+        border-radius: 26px 26px 0 0;
+        background: linear-gradient(165deg, #242d43, #1a2235);
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+        padding: clamp(12px, 3.6vw, 18px) clamp(10px, 4.2vw, 16px) clamp(16px, 6vw, 24px);
+        overflow: auto;
+      }
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .head h2 {
+        margin: 0;
+        font-size: clamp(22px, 6.6vw, 28px);
+      }
+      .close {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        font-size: 22px;
+      }
+      .sec {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 16px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        margin-bottom: 12px;
+      }
+      .sec h3 {
+        margin: 0 0 6px;
+        font-size: clamp(18px, 5.2vw, 22px);
+      }
+      .desc {
+        margin: 0 0 10px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: clamp(13px, 3.6vw, 15px);
+      }
+      .btn-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .btn {
+        height: 36px;
+        padding: 0 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        font-size: clamp(12px, 3.4vw, 14px);
+      }
+      .btn.primary {
+        border: none;
+        background: linear-gradient(145deg, #ff5d86, #ff2e69);
+      }
+      .list {
+        display: grid;
+        gap: 8px;
+      }
+      .item {
+        border-radius: 10px;
+        padding: 9px 10px;
+        background: rgba(255, 255, 255, 0.08);
+        font-size: clamp(12px, 3.4vw, 14px);
+        overflow: hidden;
+      }
+      .item .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+      }
+      .path-text {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .form input,
+      .form select {
+        height: 38px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        padding: 0 10px;
+        font-size: clamp(12px, 3.4vw, 14px);
+        min-width: 0;
+      }
+      .form .full { grid-column: 1 / -1; }
+      .status {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #8ee6a3;
+        word-break: break-all;
+      }
+      .status.error { color: #ff9ea5; }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 20;
+      }
+      .modal.open { display: flex; }
+      .modal-card {
+        width: min(92vw, 560px);
+        max-height: 80vh;
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 16px;
+        background: #1a2235;
+        padding: 12px;
+      }
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal-title { margin: 0; font-size: 18px; }
+      .modal-path {
+        border-radius: 10px;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 13px;
+        word-break: break-all;
+      }
+      .modal-list {
+        overflow: auto;
+        display: grid;
+        gap: 8px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+      .dir-btn {
+        width: 100%;
+        text-align: left;
+      }
+
+      @media (max-width: 380px) {
+        .sheet {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+        .btn-row {
+          gap: 6px;
+        }
+        .btn {
+          height: 34px;
+          padding: 0 10px;
+        }
+      }
+
+      @media (max-height: 740px) {
+        .sheet {
+          height: 86%;
+          border-radius: 20px 20px 0 0;
+          padding-top: 10px;
+        }
+        .sec {
+          margin-bottom: 10px;
+          padding: 10px;
+        }
+      }
+
+      @media (min-width: 768px) {
+        .phone {
+          border-left: 1px solid rgba(255, 255, 255, 0.08);
+          border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="viewport">
+      <div class="phone">
+        <div class="bg">
+          <h1 class="mock-title">设置</h1>
+          <div class="mock-lyrics">音乐库与 WebDAV 管理</div>
+        </div>
+        <div class="mask"></div>
+        <section class="sheet">
+          <div class="head">
+            <h2>设置</h2>
+            <button class="close" id="close-btn">×</button>
+          </div>
+
+          <div class="sec">
+            <h3>本地音乐目录</h3>
+            <p class="desc">使用系统目录选择器添加（可继续进入子目录）。</p>
+            <div class="btn-row">
+              <button id="local-browse-btn" class="btn primary">添加目录到曲库</button>
+              <button id="scan-local-btn" class="btn">重新扫描</button>
+            </div>
+            <div id="local-current-path" class="item">说明：点击“系统选择目录”后在系统文件管理器中选择</div>
+            <div id="local-list" class="list"></div>
+          </div>
+
+          <div class="sec">
+            <h3>WebDAV 曲库</h3>
+            <p class="desc">先测试连接，再浏览目录并选择当前目录添加。</p>
+            <div class="form">
+              <select id="protocol">
+                <option value="https">https</option>
+                <option value="http">http</option>
+              </select>
+              <input id="port" placeholder="端口（如 5006）" value="5006" />
+              <input id="host" class="full" placeholder="主机地址（如 127.0.0.1）" value="" />
+              <input id="username" placeholder="账号" value="" />
+              <input id="password" placeholder="密码" type="password" value="" />
+            </div>
+            <div class="btn-row" style="margin-top:10px;">
+              <button id="test-btn" class="btn primary">测试连接</button>
+              <button id="webdav-browse-btn" class="btn">浏览目录</button>
+              <button id="save-btn" class="btn">保存配置</button>
+              <button id="add-lib-btn" class="btn">添加曲库</button>
+            </div>
+            <div id="webdav-selected-path" class="item">已选择：/</div>
+            <div class="desc" style="margin-top:8px;">已添加曲库</div>
+            <div id="lib-list" class="list"></div>
+            <div id="status" class="status">等待操作</div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div id="local-browser-modal" class="modal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 class="modal-title">本地目录浏览</h3>
+          <button id="local-browser-close" class="btn">关闭</button>
+        </div>
+        <div id="local-browser-path" class="modal-path">/</div>
+        <div id="local-browser-list" class="modal-list"></div>
+        <div class="modal-actions">
+          <button id="local-browser-up" class="btn">上一级</button>
+          <button id="local-browser-select" class="btn primary">选择当前目录</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="webdav-browser-modal" class="modal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3 class="modal-title">WebDAV 目录浏览</h3>
+          <button id="webdav-browser-close" class="btn">关闭</button>
+        </div>
+        <div id="webdav-browser-path" class="modal-path">/</div>
+        <div id="webdav-browser-list" class="modal-list"></div>
+        <div class="modal-actions">
+          <button id="webdav-browser-up" class="btn">上一级</button>
+          <button id="webdav-browser-select" class="btn primary">选择当前目录</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const bridge = window.AndroidBridge;
+      const closeBtn = document.getElementById("close-btn");
+      const statusEl = document.getElementById("status");
+
+      const localListEl = document.getElementById("local-list");
+      const localCurrentPathEl = document.getElementById("local-current-path");
+      const localBrowseBtn = document.getElementById("local-browse-btn");
+      const scanLocalBtn = document.getElementById("scan-local-btn");
+      const localBrowserModal = document.getElementById("local-browser-modal");
+      const localBrowserClose = document.getElementById("local-browser-close");
+      const localBrowserPath = document.getElementById("local-browser-path");
+      const localBrowserList = document.getElementById("local-browser-list");
+      const localBrowserUp = document.getElementById("local-browser-up");
+      const localBrowserSelect = document.getElementById("local-browser-select");
+      let localCurrentPath = "/";
+      let localBrowsingPath = "/";
+
+      const protocolEl = document.getElementById("protocol");
+      const hostEl = document.getElementById("host");
+      const portEl = document.getElementById("port");
+      const usernameEl = document.getElementById("username");
+      const passwordEl = document.getElementById("password");
+      const testBtn = document.getElementById("test-btn");
+      const webdavBrowseBtn = document.getElementById("webdav-browse-btn");
+      const saveBtn = document.getElementById("save-btn");
+      const addLibBtn = document.getElementById("add-lib-btn");
+      const webdavSelectedPathEl = document.getElementById("webdav-selected-path");
+      const libListEl = document.getElementById("lib-list");
+      const webdavBrowserModal = document.getElementById("webdav-browser-modal");
+      const webdavBrowserClose = document.getElementById("webdav-browser-close");
+      const webdavBrowserPath = document.getElementById("webdav-browser-path");
+      const webdavBrowserList = document.getElementById("webdav-browser-list");
+      const webdavBrowserUp = document.getElementById("webdav-browser-up");
+      const webdavBrowserSelect = document.getElementById("webdav-browser-select");
+      let webdavCurrentPath = "/";
+      let webdavBrowsingPath = "/";
+
+      function setStatus(text, isError = false) {
+        statusEl.textContent = text;
+        statusEl.classList.toggle("error", !!isError);
+      }
+
+      function parseJsonSafe(raw, fallback) {
+        try { return JSON.parse(raw || ""); } catch { return fallback; }
+      }
+
+      function parentPath(path) {
+        const seg = String(path || "/").split("/").filter(Boolean);
+        seg.pop();
+        return seg.length ? `/${seg.join("/")}` : "/";
+      }
+
+      function parentWebdavPath(path) {
+        const seg = String(path || "/").split("/").filter(Boolean);
+        seg.pop();
+        return seg.length ? `/${seg.join("/")}/` : "/";
+      }
+
+      function normalizePath(path) {
+        const s = String(path || "/").trim().replace(/\\/g, "/");
+        if (!s || s === "/") return "/";
+        return `/${s.replace(/^\/+|\/+$/g, "")}/`;
+      }
+
+      function normalizeWebdavPath(path) {
+        const s = String(path || "/").trim();
+        if (!s || s === "/") return "/";
+        return s.startsWith("/") ? s : `/${s}`;
+      }
+
+      function renderLocalDirs(list) {
+        localListEl.innerHTML = "";
+        if (!Array.isArray(list) || list.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "item";
+          empty.textContent = "还没有添加本地目录";
+          localListEl.appendChild(empty);
+          return;
+        }
+        list.forEach((path) => {
+          const item = document.createElement("div");
+          item.className = "item";
+          const row = document.createElement("div");
+          row.className = "row";
+          const text = document.createElement("span");
+          text.className = "path-text";
+          text.textContent = path;
+          text.title = path;
+          const del = document.createElement("button");
+          del.className = "btn";
+          del.textContent = "删除";
+          del.addEventListener("click", () => {
+            try {
+              const raw = bridge.removeLocalMusicDir(path);
+              renderLocalDirs(parseJsonSafe(raw, []));
+              setStatus("目录已删除");
+            } catch {
+              setStatus("删除目录失败", true);
+            }
+          });
+          row.appendChild(text);
+          row.appendChild(del);
+          item.appendChild(row);
+          localListEl.appendChild(item);
+        });
+      }
+
+      function loadLocalDirs() {
+        try {
+          if (!bridge || typeof bridge.getLocalMusicDirsJson !== "function") return;
+          renderLocalDirs(parseJsonSafe(bridge.getLocalMusicDirsJson(), []));
+        } catch {
+          renderLocalDirs([]);
+        }
+      }
+
+      function openLocalBrowser() {
+        localBrowsingPath = localCurrentPath || "/";
+        localBrowserModal.classList.add("open");
+        refreshLocalBrowser();
+      }
+
+      function closeLocalBrowser() {
+        localBrowserModal.classList.remove("open");
+      }
+
+      function refreshLocalBrowser() {
+        localBrowserPath.textContent = localBrowsingPath;
+        localBrowserList.innerHTML = "";
+        try {
+          if (!bridge || typeof bridge.listLocalDirectoryJson !== "function") {
+            setStatus("未接入本地目录浏览", true);
+            return;
+          }
+          const dirs = parseJsonSafe(bridge.listLocalDirectoryJson(localBrowsingPath), []);
+          if (!Array.isArray(dirs) || dirs.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "item";
+            empty.textContent = "当前目录没有子目录";
+            localBrowserList.appendChild(empty);
+            return;
+          }
+          dirs.forEach((dir) => {
+            const btn = document.createElement("button");
+            btn.className = "btn dir-btn";
+            btn.textContent = dir.name || dir.path;
+            btn.addEventListener("click", () => {
+              localBrowsingPath = normalizePath(dir.path || "/");
+              refreshLocalBrowser();
+            });
+            localBrowserList.appendChild(btn);
+          });
+        } catch (e) {
+          setStatus(`本地目录读取失败: ${e?.message || "未知错误"}`, true);
+        }
+      }
+
+      function addSelectedLocalPath() {
+        try {
+          if (!bridge || typeof bridge.addLocalMusicDir !== "function") {
+            setStatus("未接入本地目录能力", true);
+            return;
+          }
+          const raw = bridge.addLocalMusicDir(localCurrentPath || "/");
+          renderLocalDirs(parseJsonSafe(raw, []));
+          setStatus(`已添加目录: ${localCurrentPath}`);
+        } catch {
+          setStatus("添加目录失败", true);
+        }
+      }
+
+      function loadWebdavSettings() {
+        try {
+          if (!bridge || typeof bridge.getWebdavSettingsJson !== "function") return;
+          const cfg = parseJsonSafe(bridge.getWebdavSettingsJson(), {});
+          protocolEl.value = cfg.protocol || "https";
+          hostEl.value = cfg.host || "";
+          portEl.value = cfg.port || "5006";
+          usernameEl.value = cfg.username || "";
+          passwordEl.value = cfg.password || "";
+          webdavCurrentPath = normalizeWebdavPath(cfg.folderPath || "/");
+          webdavSelectedPathEl.textContent = `已选择：${webdavCurrentPath}`;
+          setStatus("已读取本地配置");
+        } catch {
+          setStatus("读取配置失败", true);
+        }
+      }
+
+      function collectConfig() {
+        return {
+          protocol: protocolEl.value || "https",
+          host: hostEl.value.trim(),
+          port: portEl.value.trim() || "5006",
+          username: usernameEl.value.trim(),
+          password: passwordEl.value,
+          folderPath: webdavCurrentPath || "/",
+        };
+      }
+
+      function saveConfig() {
+        try {
+          if (!bridge || typeof bridge.setWebdavSettingsJson !== "function") return;
+          bridge.setWebdavSettingsJson(JSON.stringify(collectConfig()));
+          setStatus("配置已保存");
+        } catch {
+          setStatus("保存失败", true);
+        }
+      }
+
+      function renderLibs(list) {
+        libListEl.innerHTML = "";
+        if (!Array.isArray(list) || list.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "item";
+          empty.textContent = "暂无 WebDAV 曲库";
+          libListEl.appendChild(empty);
+          return;
+        }
+        list.forEach((lib) => {
+          const row = document.createElement("div");
+          row.className = "item";
+          row.textContent = `${lib.protocol}://${lib.host}:${lib.port}${lib.folderPath}`;
+          const del = document.createElement("button");
+          del.className = "btn";
+          del.style.marginTop = "8px";
+          del.textContent = "删除";
+          del.addEventListener("click", () => {
+            try {
+              const raw = bridge.removeWebdavLibrary(lib.id);
+              renderLibs(parseJsonSafe(raw, []));
+              setStatus("曲库已删除");
+            } catch {
+              setStatus("删除失败", true);
+            }
+          });
+          row.appendChild(document.createElement("br"));
+          row.appendChild(del);
+          libListEl.appendChild(row);
+        });
+      }
+
+      function loadLibraries() {
+        try {
+          if (!bridge || typeof bridge.getWebdavLibrariesJson !== "function") return;
+          renderLibs(parseJsonSafe(bridge.getWebdavLibrariesJson(), []));
+        } catch {
+          renderLibs([]);
+        }
+      }
+
+      function openWebdavBrowser() {
+        webdavBrowsingPath = webdavCurrentPath || "/";
+        webdavBrowserModal.classList.add("open");
+        refreshWebdavBrowser();
+      }
+
+      function closeWebdavBrowser() {
+        webdavBrowserModal.classList.remove("open");
+      }
+
+      function refreshWebdavBrowser() {
+        webdavBrowserPath.textContent = webdavBrowsingPath;
+        webdavBrowserList.innerHTML = "";
+        try {
+          if (!bridge || typeof bridge.listWebdavDirectoryJson !== "function") {
+            setStatus("未接入 WebDAV 浏览能力", true);
+            return;
+          }
+          const cfg = collectConfig();
+          const dirs = parseJsonSafe(bridge.listWebdavDirectoryJson(JSON.stringify(cfg), webdavBrowsingPath), []);
+          if (!Array.isArray(dirs) || dirs.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "item";
+            empty.textContent = "当前目录没有子目录";
+            webdavBrowserList.appendChild(empty);
+            return;
+          }
+          dirs.forEach((dir) => {
+            const btn = document.createElement("button");
+            btn.className = "btn dir-btn";
+            btn.textContent = dir.name || dir.path;
+            btn.addEventListener("click", () => {
+              webdavBrowsingPath = normalizeWebdavPath(dir.path || "/");
+              refreshWebdavBrowser();
+            });
+            webdavBrowserList.appendChild(btn);
+          });
+        } catch (e) {
+          setStatus(`WebDAV 目录读取失败: ${e?.message || "未知错误"}`, true);
+        }
+      }
+
+      closeBtn?.addEventListener("click", () => {
+        window.location.replace("./main.html");
+      });
+
+      document.addEventListener("contextmenu", (e) => e.preventDefault());
+      document.addEventListener("selectstart", (e) => e.preventDefault());
+
+      (function bindSwipeBackToMain() {
+        let sx = 0;
+        let sy = 0;
+        let startAt = 0;
+        document.addEventListener("touchstart", (e) => {
+          if (!e.touches || !e.touches.length) return;
+          sx = e.touches[0].clientX;
+          sy = e.touches[0].clientY;
+          startAt = Date.now();
+        }, { passive: true });
+        document.addEventListener("touchend", (e) => {
+          if (!e.changedTouches || !e.changedTouches.length) return;
+          const ex = e.changedTouches[0].clientX;
+          const ey = e.changedTouches[0].clientY;
+          const dx = ex - sx;
+          const dy = Math.abs(ey - sy);
+          const dt = Date.now() - startAt;
+          if (dx < -70 && dy < 48 && dt < 450) {
+            if (localBrowserModal.classList.contains("open")) {
+              closeLocalBrowser();
+              return;
+            }
+            if (webdavBrowserModal.classList.contains("open")) {
+              closeWebdavBrowser();
+              return;
+            }
+            window.location.replace("./main.html");
+          }
+        }, { passive: true });
+      })();
+
+      localBrowseBtn?.addEventListener("click", () => {
+        try {
+          if (!bridge || typeof bridge.requestAddLocalMusicDir !== "function") {
+            setStatus("未接入系统目录选择器", true);
+            return;
+          }
+          bridge.requestAddLocalMusicDir();
+          setStatus("请在系统文件管理器中选择目录");
+        } catch (e) {
+          setStatus(`打开目录选择器失败: ${e?.message || "未知错误"}`, true);
+        }
+      });
+      localBrowserClose?.addEventListener("click", closeLocalBrowser);
+      localBrowserModal?.addEventListener("click", (e) => { if (e.target === localBrowserModal) closeLocalBrowser(); });
+      localBrowserUp?.addEventListener("click", () => {
+        localBrowsingPath = parentPath(localBrowsingPath);
+        refreshLocalBrowser();
+      });
+      localBrowserSelect?.addEventListener("click", () => {
+        localCurrentPath = normalizePath(localBrowsingPath);
+        localCurrentPathEl.textContent = `已选择：${localCurrentPath}`;
+        closeLocalBrowser();
+      });
+      window.onNativeLocalDirsChanged = (payload) => {
+        try {
+          const list = Array.isArray(payload?.list) ? payload.list : [];
+          renderLocalDirs(list);
+          setStatus("本地目录已更新，请点击“重新扫描”");
+        } catch {
+          loadLocalDirs();
+        }
+      };
+
+      scanLocalBtn?.addEventListener("click", () => {
+        try {
+          if (!bridge || (typeof bridge.refreshLibraryNow !== "function" && typeof bridge.scanLocalMusicNow !== "function")) {
+            setStatus("未接入扫描能力", true);
+            return;
+          }
+          const raw = typeof bridge.refreshLibraryNow === "function" ? bridge.refreshLibraryNow() : bridge.scanLocalMusicNow();
+          const result = parseJsonSafe(raw, {});
+          setStatus(`本地扫描完成，共 ${Number(result.localCount || 0)} 首`);
+        } catch (e) {
+          setStatus(`扫描失败: ${e?.message || "未知错误"}`, true);
+        }
+      });
+
+      testBtn?.addEventListener("click", () => {
+        const cfg = collectConfig();
+        if (!cfg.host || !cfg.username) {
+          setStatus("请先填写主机和账号", true);
+          return;
+        }
+        try {
+          if (!bridge || typeof bridge.testWebdavConnectionJson !== "function") {
+            setStatus("未接入测试能力", true);
+            return;
+          }
+          const result = parseJsonSafe(bridge.testWebdavConnectionJson(JSON.stringify(cfg)), {});
+          setStatus(result.message || "测试完成", !result.ok);
+        } catch (e) {
+          setStatus(`测试失败: ${e?.message || "未知错误"}`, true);
+        }
+      });
+
+      webdavBrowseBtn?.addEventListener("click", openWebdavBrowser);
+      webdavBrowserClose?.addEventListener("click", closeWebdavBrowser);
+      webdavBrowserModal?.addEventListener("click", (e) => { if (e.target === webdavBrowserModal) closeWebdavBrowser(); });
+      webdavBrowserUp?.addEventListener("click", () => {
+        webdavBrowsingPath = parentWebdavPath(webdavBrowsingPath);
+        refreshWebdavBrowser();
+      });
+      webdavBrowserSelect?.addEventListener("click", () => {
+        webdavCurrentPath = normalizeWebdavPath(webdavBrowsingPath);
+        webdavSelectedPathEl.textContent = `已选择：${webdavCurrentPath}`;
+        closeWebdavBrowser();
+      });
+
+      saveBtn?.addEventListener("click", saveConfig);
+      addLibBtn?.addEventListener("click", () => {
+        try {
+          if (!bridge || typeof bridge.addWebdavLibraryJson !== "function") {
+            setStatus("未接入添加曲库能力", true);
+            return;
+          }
+          const raw = bridge.addWebdavLibraryJson(JSON.stringify(collectConfig()));
+          renderLibs(parseJsonSafe(raw, []));
+          setStatus("曲库添加成功，请点击“重新扫描”");
+        } catch (e) {
+          setStatus(`曲库添加失败: ${e?.message || "未知错误"}`, true);
+        }
+      });
+
+      loadLocalDirs();
+      loadWebdavSettings();
+      loadLibraries();
+      localCurrentPathEl.textContent = `已选择：${localCurrentPath}`;
+    </script>
+  </body>
+</html>

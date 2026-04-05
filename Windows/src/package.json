@@ -1,0 +1,51 @@
+{
+  "name": "testprogram",
+  "version": "1.0.0",
+  "description": "Mona Music 本地音乐播放器 MVP",
+  "main": "main-fixed.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win nsis",
+    "build:portable": "electron-builder --win portable"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Mona",
+    "email": "654275156@qq.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^41.1.1",
+    "electron-builder": "^26.8.1",
+    "png-to-ico": "^3.0.1"
+  },
+  "build": {
+    "appId": "com.mona.music",
+    "productName": "Mona Music",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main-fixed.js",
+      "preload.js",
+      "build/icon.ico",
+      "renderer-fixed/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "legalTrademarks": "Mona",
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "music-metadata": "^11.12.3"
+  }
+}

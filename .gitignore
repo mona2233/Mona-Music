@@ -1,0 +1,22 @@
+﻿# Global
+.DS_Store
+Thumbs.db
+*.log
+
+# Windows desktop (Electron)
+Windows/src/node_modules/
+Windows/src/dist/
+Windows/src/.cache/
+
+# Android
+Android/src/.gradle/
+Android/src/.idea/
+Android/src/local.properties
+Android/src/**/build/
+Android/src/android-sdk/
+Android/src/jdk*/
+Android/src/keystore/
+
+# IDE
+.vscode/
+.idea/

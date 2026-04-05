@@ -1,0 +1,147 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mona Music</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="window-topbar" id="window-topbar">
+      <div class="window-drag-fill"></div>
+      <div class="window-actions">
+        <button id="window-min-btn" class="window-btn" title="最小化" aria-label="最小化">-</button>
+        <button id="window-max-btn" class="window-btn" title="最大化" aria-label="最大化">□</button>
+        <button id="window-close-btn" class="window-btn window-btn-close" title="关闭" aria-label="关闭">×</button>
+      </div>
+    </header>
+
+    <div class="app">
+      <aside class="sidebar">
+        <h1 class="brand">Mona Music</h1>
+        <div class="sidebar-top-row">
+          <input id="search-input" class="search-input search-input-full" placeholder="搜索歌曲或歌手" />
+        </div>
+        <div id="track-list" class="track-list"></div>
+      </aside>
+
+      <main class="stage">
+        <section class="vinyl-panel">
+          <div id="vinyl" class="vinyl">
+            <div class="vinyl-rings"></div>
+            <div class="vinyl-center">
+              <img id="cover-image" class="cover-image hidden" alt="cover" />
+              <div id="cover-fallback" class="cover-fallback" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="track-meta">
+            <h2 id="track-title" class="track-title">请在设置中添加音乐目录</h2>
+            <p id="track-artist" class="track-artist">Mona Music</p>
+            <p id="track-quality" class="track-quality">未知音质</p>
+          </div>
+        </section>
+
+        <section class="lyrics-panel">
+          <div id="metadata-loading-tip" class="metadata-loading-tip hidden">正在加载远程元数据...</div>
+          <div id="lyrics-container" class="lyrics-container"></div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="player-bar">
+      <div class="control-row">
+        <button id="open-settings-button" class="control-button icon-button" title="设置" aria-label="设置">
+          <img src="./icons/settings.svg" class="icon-img" alt="" aria-hidden="true" />
+        </button>
+        <button id="prev-button" class="control-button icon-button" title="上一首" aria-label="上一首">
+          <img src="./icons/next.svg" class="icon-img icon-prev" alt="" aria-hidden="true" />
+        </button>
+        <button id="play-button" class="control-button play-button icon-button" title="播放" aria-label="播放"></button>
+        <button id="next-button" class="control-button icon-button" title="下一首" aria-label="下一首">
+          <img src="./icons/next.svg" class="icon-img" alt="" aria-hidden="true" />
+        </button>
+        <div class="mode-buttons">
+          <button id="mode-sequence" class="control-button mode-button icon-button active" title="顺序播放" aria-label="顺序播放">
+            <img src="./icons/sequence.svg" class="icon-img" alt="" aria-hidden="true" />
+          </button>
+          <button id="mode-loop" class="control-button mode-button icon-button" title="单曲循环" aria-label="单曲循环">
+            <img src="./icons/loop.svg" class="icon-img" alt="" aria-hidden="true" />
+          </button>
+          <button id="mode-shuffle" class="control-button mode-button icon-button" title="随机播放" aria-label="随机播放">
+            <img src="./icons/shuffle.svg" class="icon-img" alt="" aria-hidden="true" />
+          </button>
+        </div>
+        <div class="volume-wrap" title="音量">
+          <button id="volume-toggle-btn" class="control-button icon-button volume-toggle" aria-label="静音切换" title="静音">
+            <img id="volume-icon-high" src="./icons/volume.svg" class="icon-img" alt="" aria-hidden="true" />
+            <img id="volume-icon-mute" src="./icons/mute.svg" class="icon-img hidden" alt="" aria-hidden="true" />
+          </button>
+          <input id="volume" class="volume" type="range" min="0" max="100" value="80" />
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <input id="progress" class="progress" type="range" min="0" max="1000" value="0" />
+        <div class="time-block">
+          <span id="current-time">00:00</span>
+          <span id="total-time">00:00</span>
+        </div>
+      </div>
+    </footer>
+
+    <section id="settings-panel" class="settings-panel hidden" aria-hidden="true">
+      <div class="settings-card">
+        <div class="settings-header">
+          <h2>设置</h2>
+          <button id="close-settings-button" class="settings-close-btn" aria-label="关闭设置">×</button>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">音乐目录</div>
+          <p class="settings-section-desc">添加或删除要扫描的本地目录，首页会显示已添加目录中的歌曲。</p>
+          <button id="add-library-path-button" class="settings-primary-btn">添加目录</button>
+          <div id="library-path-list" class="library-path-list"></div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">WebDAV 曲库</div>
+          <p class="settings-section-desc">输入连接信息后先测试，再浏览并选择远程目录进行添加。</p>
+          <div class="webdav-form">
+            <select id="webdav-protocol" class="settings-input">
+              <option value="https">https</option>
+              <option value="http">http</option>
+            </select>
+            <input id="webdav-host" class="settings-input" placeholder="主机地址 (如 127.0.0.1)" />
+            <input id="webdav-port" class="settings-input" placeholder="端口 (如 5006)" />
+            <input id="webdav-username" class="settings-input" placeholder="账号" />
+            <input id="webdav-password" class="settings-input" type="password" placeholder="密码" />
+          </div>
+          <div class="webdav-actions">
+            <button id="webdav-test-button" class="settings-primary-btn">测试连接</button>
+            <button id="webdav-browse-button" class="settings-primary-btn">选择远程目录</button>
+            <button id="webdav-add-button" class="settings-primary-btn">添加 WebDAV 曲库</button>
+          </div>
+          <p id="webdav-status" class="settings-section-desc"></p>
+          <div id="webdav-selected-path" class="library-path-text">未选择远程目录</div>
+          <div id="webdav-library-list" class="library-path-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="webdav-browser-modal" class="webdav-browser-modal hidden" aria-hidden="true">
+      <div class="webdav-browser-card">
+        <div class="webdav-browser-header">
+          <h3>选择 WebDAV 目录</h3>
+          <button id="webdav-browser-close" class="settings-close-btn" aria-label="关闭">×</button>
+        </div>
+        <div id="webdav-browser-path" class="library-path-text">/</div>
+        <div class="webdav-browser-actions">
+          <button id="webdav-browser-up" class="settings-primary-btn">返回上级</button>
+          <button id="webdav-browser-select" class="settings-primary-btn">选择当前目录</button>
+        </div>
+        <div id="webdav-browser-list" class="webdav-browser-list"></div>
+      </div>
+    </section>
+
+    <audio id="audio-player"></audio>
+    <script src="./renderer.js"></script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+﻿# 复制本文件为 signing.properties 并填写真实值
+storeFile=../keystore/mona-music-release.jks
+storePassword=REPLACE_ME
+keyAlias=mona_music
+keyPassword=REPLACE_ME
